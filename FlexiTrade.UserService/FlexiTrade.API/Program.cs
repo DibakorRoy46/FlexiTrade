@@ -1,18 +1,32 @@
-namespace FlexiTrade.API
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
-            var app = builder.Build();
+using FlexiTrade.Infrastructure;
+using FlexiTrade.Core;
+using FlexiTrade.API.Middleware;
 
-            app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(args);
 
-            app.Run();
-        }
-    }
-}
+//Add services to the container.
+builder.Services.AddInfrastructure();
+builder.Services.AddCore();
+
+// Add controllers
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+//Exception handling middleware
+app.UseExcelptionHandlingMiddleware();
+
+//Routing
+app.UseRouting();
+
+//Auth
+app.UseAuthentication();
+app.UseAuthorization();
+
+//Map controllers
+app.MapControllers();
+
+app.Run();
 
 
 
